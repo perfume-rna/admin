@@ -49,18 +49,27 @@
         </div>
     </div>
 
-    <div id="login_signup_loading_container">
-          <div id="login_signup_loading">
+    <div id="loading_container">
+          <div id="loading">
            <img src="https://media1.tenor.com/m/Pq1cZiuhlEEAAAAC/rajinikanth.gif" alt="loading" />
            <p>Loading ...</p>
           </div>
+    </div>
+
+    <div id="failed_container">
+       <div id="failed">
+             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSL2pcBiB5mWS_hJxDZQEvBMNsakG3P4GygTQ&s" alt="loading" />
+             <h2>Failed</h2>
+             <p id="error_p_tag"></p>
+             <button onclick="document.getElementById('failed_container').style.display = 'none'; ">Close</button>
+        </div>
     </div>
 </body>
 
 <style>
     /* --- Styles are unchanged from your original code --- */
     body {
-        background-image: linear-gradient(to right, rgb(188, 0, 217), blueviolet);
+        background: linear-gradient(135deg, #74ebd5, #ACB6E5);
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -139,7 +148,7 @@
     }
 
     .form-container {
-        background: #fff;
+        background: linear-gradient(135deg, #74ebd5, #ACB6E5);
         padding: 30px;
         border-radius: 12px;
         width: 350px;
@@ -199,7 +208,7 @@
     }
 
     /*Loading*/
-    #login_signup_loading {
+    #loading {
       font-family: Arial, Helvetica, sans-serif;
       border: 0.5px solid black;
       border-radius: 8px;
@@ -214,7 +223,7 @@
       max-width: 200px;
     }
 
-    #login_signup_loading_container {
+    #loading_container {
       position: fixed;
     top: 0;
     left: 0;
@@ -227,13 +236,58 @@
     z-index: 1000;
     }
 
-    #login_signup_loading img {
+    #loading img {
       width: 60px;
       height: 60px;
     }
 
+    
+
+    #failed_container{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    }
+
+    #failed {
+      font-family: Arial, Helvetica, sans-serif;
+      border: 0.5px solid black;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      width: 30%;
+      background-color: white;
+    }
+    
+    #failed h2 {
+      color: red;
+    }
+    
+    #failed button {
+      background-color: #2F3A73;
+      color: white;
+      font-size: 20px;
+      padding: 0 10px;
+      border-radius: 8px;
+    }
+
+    #failed img {
+      width: 90px; 
+      height: 90px;
+    }
+
     @media (max-width: 500px) {
-      #login_signup_failed {
+      #failed {
         width: 50%;
       }
     }
@@ -248,6 +302,11 @@
         createDB();
         console.log("DB created.");
     });
+
+    function error_render(message) {
+       document.getElementById("error_p_tag").innerText = message;
+       document.getElementById("failed_container").style.display = "flex";
+    }
 
     let token = String("{{token}}");
     const protocol = window.location.protocol === "https:" ? "wss" : "ws";
@@ -270,8 +329,8 @@
     function write_data(products) {
         if (!db) {
             console.log("Error"); 
-            document.getElementById("login_signup_loading_container").style.display = "none"; 
-            alert("No database created");
+            document.getElementById("loading_container").style.display = "none";
+            error_render("No database created") 
             return;
         }
         console.log("Write");
@@ -283,7 +342,7 @@
             );
         });
         renderProductList();
-        document.getElementById("login_signup_loading_container").style.display = "none";
+        document.getElementById("loading_container").style.display = "none";
     }
 
     function renderProductList() {
@@ -354,18 +413,19 @@
         if (websocket.readyState === WebSocket.OPEN) {
             websocket.send(JSON.stringify(payload));
         } else {
+            error_render("WebSocket not connected. Please try again");
             console.error("WebSocket not connected.");
         }
         document.getElementById("update_submit").disabled = false;
     }
 
-    websocket.onopen = () => console.log("WebSocket connected.");
-    websocket.onclose = () => console.warn("WebSocket disconnected.");
-    websocket.onerror = (error) => console.error("WebSocket error:", error);
+    websocket.onopen = () => {document.getElementById("loading_container").style.display = "flex"; console.log("WebSocket connected.")};
+    websocket.onclose = () => {document.getElementById("loading_container").style.display = "flex"; alert("WebSocket disconnected.")};
+    websocket.onerror = (error) => {error_render("Websocket Connection Error. Please try again."); console.error("WebSocket error:", error)};
 
     websocket.onmessage = function(event) {
         document.getElementById("screen").style.display = "none";
-        document.getElementById("login_signup_loading_container").style.display = "flex";
+        document.getElementById("loading_container").style.display = "flex";
        setTimeout(() => {
         try {
             const data = JSON.parse(event.data);
@@ -373,7 +433,7 @@
             write_data(data.data);
         } catch(err) {
             console.error(err);
-            alert("Error on updating data");
+            error_render("Error on updating data");
         }
        }, 1000);
     };
