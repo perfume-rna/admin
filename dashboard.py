@@ -9,7 +9,7 @@ import bleach
 import uvicorn
 
 productdb = create_engine(
-    "mysql+pymysql://4J4VubRMtDYVKrk.root:UtLbWgr32k7ka8sW@gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/perfume_product_db",
+    "mysql+pymysql://2qFsVSFAe2DfpMX.root:1I8dZWlcgKaXxeJ4@gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/perfume_product_db",
     pool_pre_ping=True,
     connect_args={
         "ssl": {
@@ -185,7 +185,7 @@ async def main(data):
                     UPDATE products_tbl
                     SET name=:name, price=:price, 
                         description=:description,
-                        qty=:qty, img_link=:img
+                        quantity=:qty, img_link=:img
                     WHERE name=:name
                 """), {
                     "name": data["product_name"],
