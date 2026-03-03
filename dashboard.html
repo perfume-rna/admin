@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sql.js@1.10.2/dist/sql-wasm.js"></script>
+</head>
+<body>
+    <h1 style="color: white; text-align: center;">Admin Dashboard</h1>
+
+    <div id="product_details_container">
+        <table id="product_details_table">
+            <tr id="product_details_table_header">
+                <td>Number</td>
+                <td>Name</td>
+                <td>Quantity</td>
+                <td>Price</td>
+                <td>Link</td>
+                <td>Description</td>
+            </tr>
+        </table>
+
+        <br>
+        <button id="add_product_btn" onclick="new_product_form()">Add</button>
+    </div>
+
+    <div id="screen">
+        <div class="form-container">
+            <h2>Product Update</h2>
+            <form id="form_update_product">
+                <label>Product Name</label>
+                <input type="text" placeholder="Product name" id="product_name_up" required>
+                <br>
+                <label>Quantity</label>
+                <input type="number" placeholder="Product quantity" id="product_qty_up" required>
+                <br>
+                <label>Price</label>
+                <input type="number" placeholder="Product price" id="product_price_up" required>
+                <br>
+                <label>Image link</label>
+                <input type="text" placeholder="Product image link" id="product_img_up" required>
+                <br>
+                <label>Description</label>
+                <br>
+                <textarea placeholder="Product description" id="product_dsc_up" required></textarea>
+                <button id="back_button_pu" type="button" onclick="close_form()">Back</button>
+                <button id="delete_button_pu" type="button" onclick="update_product_send('delete')">Delete</button>
+                <button type="button" id="update_submit">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="login_signup_loading_container">
+          <div id="login_signup_loading">
+           <img src="https://media1.tenor.com/m/Pq1cZiuhlEEAAAAC/rajinikanth.gif" alt="loading" />
+           <p>Loading ...</p>
+          </div>
+    </div>
+</body>
+
+<style>
+    /* --- Styles are unchanged from your original code --- */
+    body {
+        background-image: linear-gradient(to right, rgb(188, 0, 217), blueviolet);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #navigation_tab {
+        width: 70%;
+        max-width: 500px;
+        display: flex;
+        flex-direction: row;
+        gap: 70px;
+        align-items: center;
+        justify-content: center;
+        background-color: white;
+        border: 1px solid rgb(206, 206, 206);
+        border-radius: 20px;
+        padding: 10px;
+    }
+
+    #navigation_tab > div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    #navigation_tab > div > p {
+        color: rgb(206, 206, 206);
+    }
+
+    i {
+        font-size: 20px;
+    }
+
+    #product_details_container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        height: 100vh;
+    }
+
+    #product_details_table_header {
+        font-size: 23px;
+        background-color: black;
+        color: white;
+    }
+
+    td {
+        text-align: center;
+        padding: 10px;
+    }
+
+    tr {
+        background-color: white;
+    }
+
+    tr:nth-child(odd) {
+        background-color: rgb(232, 232, 232);
+    }
+
+    table {
+        border: 1px solid black;
+        border-collapse: collapse;
+        margin: 0;
+        width: 90%;
+    }
+
+    #screen {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+    }
+
+    .form-container {
+        background: #fff;
+        padding: 30px;
+        border-radius: 12px;
+        width: 350px;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+    }
+
+    .form-container h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .form-container input {
+        width: 100%;
+        padding: 12px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 14px;
+    }
+
+    .form-container button {
+        width: 100%;
+        padding: 12px;
+        background-color: #0078d7;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .form-container button:hover {
+        background: #005fa3;
+    }
+
+    textarea {
+        width: 90%;
+        margin-top: 5px;
+        height: 100px;
+        font-size: 15px;
+    }
+
+    #back_button_pu {
+        width: 60px;
+    }
+
+    #delete_button_pu {
+        background-color: red;
+        display: block;
+    }
+
+    button {margin-top: 14px;}
+
+    #screen {
+        display: none; position: fixed; top: 0; left: 0; width: 100%; background-color:rgb(191, 191, 191);
+    }
+
+    /*Loading*/
+    #login_signup_loading {
+      font-family: Arial, Helvetica, sans-serif;
+      border: 0.5px solid black;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      width: 70%;
+      background-color: white;
+      max-width: 200px;
+    }
+
+    #login_signup_loading_container {
+      position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    }
+
+    #login_signup_loading img {
+      width: 60px;
+      height: 60px;
+    }
+
+    @media (max-width: 500px) {
+      #login_signup_failed {
+        width: 50%;
+      }
+    }
+</style>
+
+<script>
+    let db;
+    initSqlJs({
+        locateFile: file => `https://cdn.jsdelivr.net/npm/sql.js@1.10.2/dist/${file}`
+    }).then(SQL => {
+        db = new SQL.Database();
+        createDB();
+        console.log("DB created.");
+    });
+
+    let token = String("{{token}}");
+    const websocket = new WebSocket("ws://localhost:8000/ws?token=" + token);
+
+    function createDB() {
+        db.run(`
+            CREATE TABLE IF NOT EXISTS products_tbl (
+                name TEXT,
+                quantity INTEGER,
+                price TEXT,
+                link TEXT,
+                description TEXT
+            )
+        `);
+    }
+
+    function write_data(products) {
+        if (!db) {
+            console.log("Error"); 
+            document.getElementById("login_signup_loading_container").style.display = "none"; 
+            alert("No database created");
+            return;
+        }
+        console.log("Write");
+        db.run("DELETE FROM products_tbl");
+        products.forEach(element => {
+            db.run(
+                "INSERT INTO products_tbl (name, quantity, price, link, description) VALUES (?,?,?,?,?)",
+                [element[0], element[1], element[2], element[3], element[4]]
+            );
+        });
+        renderProductList();
+        document.getElementById("login_signup_loading_container").style.display = "none";
+    }
+
+    function renderProductList() {
+        const table = document.getElementById("product_details_table");
+        const result = db.exec("SELECT name, quantity, price, link, description FROM products_tbl");
+        const products = result.length ? result[0].values : [];
+
+        // Add table header
+        table.innerHTML = `
+            <tr id="product_details_table_header">
+                <td>Number</td>
+                <td>Name</td>
+                <td>Quantity</td>
+                <td>Price</td>
+                <td>Link</td>
+                <td>Description</td>
+            </tr>
+        `;
+
+        // Add rows
+        products.forEach((element, index) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${element[0]}</td>
+                <td>${element[1]}</td>
+                <td>${element[2]}</td>
+                <td><a href="${element[3]}" target="_blank">View</a></td>
+                <td>${element[4]}</td>
+            `;
+            tr.addEventListener("click", () => update_product_form(...element));
+            table.appendChild(tr);
+        });
+    }
+
+    function update_product_send(query) {
+        document.getElementById("update_submit").disabled = true;
+        let body;
+        const product_name = document.getElementById("product_name_up").value;
+        const product_description = document.getElementById("product_dsc_up").value;
+        const product_img = document.getElementById("product_img_up").value;
+        const product_qty = document.getElementById("product_qty_up").value;
+        const product_price = document.getElementById("product_price_up").value;
+
+        if (query == "insert") {
+            let products = db.exec("SELECT name FROM products_tbl")[0].values;
+            for (let i = 0; i < products.length; i++) {
+                if (product_name.trim() == products[i][0]) {
+                    alert(`Cannot add similar product name (${product_name})`);
+                    return;
+                }
+            }
+        }
+
+        body = {
+            "query": query,
+            "product_name": product_name,
+            "product_qty": product_qty,
+            "product_description": product_description,
+            "product_img": product_img,
+            "product_price": product_price
+        };
+
+        sendWS(body);
+    }
+
+    function sendWS(payload) {
+        if (websocket.readyState === WebSocket.OPEN) {
+            websocket.send(JSON.stringify(payload));
+        } else {
+            console.error("WebSocket not connected.");
+        }
+        document.getElementById("update_submit").disabled = false;
+    }
+
+    websocket.onopen = () => console.log("WebSocket connected.");
+    websocket.onclose = () => console.warn("WebSocket disconnected.");
+    websocket.onerror = (error) => console.error("WebSocket error:", error);
+
+    websocket.onmessage = function(event) {
+        document.getElementById("screen").style.display = "none";
+        document.getElementById("login_signup_loading_container").style.display = "flex";
+       setTimeout(() => {
+        try {
+            const data = JSON.parse(event.data);
+            //if (data.message == "success") {console.log("Pass"); write_data(data.data)};
+            write_data(data.data);
+        } catch(err) {
+            console.error(err);
+            alert("Error on updating data");
+        }
+       }, 1000);
+    };
+
+    function new_product_form() {
+        document.getElementById("delete_button_pu").style.display = "none";
+        document.getElementById("screen").style.display = "flex";
+
+        document.getElementById("product_name_up").value = "";
+        document.getElementById("product_qty_up").value = "";
+        document.getElementById("product_price_up").value = "";
+        document.getElementById("product_img_up").value = "";
+        document.getElementById("product_dsc_up").value = "";
+
+        document.getElementById("update_submit").onclick = () => update_product_send('insert');
+    }
+
+    function update_product_form(name, qty, price, link, description) {
+        document.getElementById("delete_button_pu").style.display = "block";
+        document.getElementById("screen").style.display = "flex";
+
+        document.getElementById("update_submit").onclick = () => update_product_send('update');
+
+        document.getElementById("product_name_up").value = name;
+        document.getElementById("product_qty_up").value = qty;
+        document.getElementById("product_price_up").value = price;
+        document.getElementById("product_img_up").value = link;
+        document.getElementById("product_dsc_up").value = description;
+    }
+
+    function close_form() {
+        document.getElementById("screen").style.display = "none";
+    }
+</script>
+</html>
