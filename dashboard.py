@@ -104,7 +104,10 @@ app.add_middleware(
 # ------------------------------
 @app.get("/", response_class=HTMLResponse)
 async def get_dashboard(request: Request):
+  try:
     return templates.TemplateResponse("dashboard.html", {"request": request})
+  except:
+       print("Error")
 
 @app.post("/login")
 async def login(request: Request):
