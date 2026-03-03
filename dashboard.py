@@ -8,7 +8,16 @@ from sqlalchemy import create_engine, text
 import bleach
 import uvicorn
 
-productdb = create_engine("mysql+pymysql://4J4VubRMtDYVKrk.root:UtLbWgr32k7ka8sW@gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/perfume_product_db", pool_pre_ping=True)
+productdb = create_engine(
+    "mysql+pymysql://4J4VubRMtDYVKrk.root:UtLbWgr32k7ka8sW@gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/perfume_product_db",
+    pool_pre_ping=True,
+    connect_args={
+        "ssl": {
+            "ca": "/etc/ssl/certs/ca-certificates.crt"
+        }
+    }
+)
+
 """
 cart1_db = create_engine("mysql+pymysql://4J4VubRMtDYVKrk.root:UtLbWgr32k7ka8sW@gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/perfume_product_db", pool_pre_ping=True)
 cart2_db = create_engine("mysql+pymysql://4J4VubRMtDYVKrk.root:UtLbWgr32k7ka8sW@gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/perfume_product_db", pool_pre_ping=True)
