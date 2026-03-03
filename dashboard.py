@@ -90,7 +90,7 @@ def generate_token() -> str:
 # FastAPI setup
 # ------------------------------
 app = FastAPI()
-templates = Jinja2Templates(directory="/Users/jayren/Desktop/Developer Files/perfume/Python /templates")
+templates = Jinja2Templates(directory="templates")
 
 app.add_middleware(
     CORSMiddleware,
