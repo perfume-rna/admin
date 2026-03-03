@@ -105,7 +105,7 @@ app.add_middleware(
 @app.get("/", response_class=HTMLResponse)
 async def get_dashboard(request: Request):
   try:
-    return templates.TemplateResponse("dashboard.html", {"request": request})
+    return templates.TemplateResponse("admin_pass.html", {"request": request})
   except:
        print("Error")
 
