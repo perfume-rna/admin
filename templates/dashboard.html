@@ -310,7 +310,7 @@
 
     let token = String("{{token}}");
     const protocol = window.location.protocol === "https:" ? "wss" : "ws";
-    const socket = new WebSocket(
+    const websocket = new WebSocket(
        `${protocol}://${window.location.host}/ws?token=${token}`
     );
 
