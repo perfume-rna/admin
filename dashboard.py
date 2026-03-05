@@ -151,74 +151,82 @@ async def websocket_endpoint(websocket: WebSocket):
             data = await websocket.receive_json()
             print(f"Received: {data}")
 
-            await main(data)
+        
+            try:
+               await main(data)
+            except Exception as e:
+               print("Processing error:", e)
+               await websocket.send_json({"message": "error", "error": str(e)})
+
 
     except WebSocketDisconnect:
         connected_clients.pop(websocket, None)
         print(f"Client disconnected. Total: {len(connected_clients)}")
 
 async def main(data):
-    # Sanitize input
-    for key, value in data.items():
-        if isinstance(value, str):
-            data[key] = bleach.clean(value)
+    try:
+        # Sanitize input
+        for key, value in data.items():
+            if isinstance(value, str):
+                data[key] = bleach.clean(value)
 
-    query = data.get("query")
+        query = data.get("query")
 
-    with productdb.begin() as conn:
+        with productdb.begin() as conn:
 
-        match query:
-            case "insert":
-                conn.execute(text("""
-                    INSERT INTO products_tbl (name, quantity, price, img_link, description)
-                    VALUES (:name, :qty, :price, :img, :description)
-                """), {
-                    "name": data["product_name"],
-                    "price": round(float(data["product_price"]), 2),
-                    "description": data["product_description"],
-                    "qty": int(data["product_qty"]),
-                    "img": data["img_link"]
-                })
+            match query:
+                case "insert":
+                    conn.execute(text("""
+                        INSERT INTO products_tbl (name, quantity, price, img_link, description)
+                        VALUES (:name, :qty, :price, :img, :description)
+                    """), {
+                        "name": data["product_name"],
+                        "price": round(float(data["product_price"]), 2),
+                        "description": data["product_description"],
+                        "qty": int(data["product_qty"]),
+                        "img": data["img_link"]
+                    })
 
-            case "update":
-                conn.execute(text("""
-                    UPDATE products_tbl
-                    SET name=:name, price=:price, 
-                        description=:description,
-                        quantity=:qty, img_link=:img
-                    WHERE name=:name
-                """), {
-                    "name": data["product_name"],
-                    "price": data["product_price"],
-                    "description": data["product_description"],
-                    "qty": data["product_qty"],
-                    "img": data["img_link"]
-                })
-                """
-                update_cart(cart1_db, data["change"], {"name": data["product_name"], "previous-name": data["previous_name"], "qty": data["product_qty"] })
-                update_cart(cart2_db, data["change"], {"name": data["product_name"], "previous-name": data["previous_name"], "qty": data["product_qty"] })
-                """
-                
-            case "delete":
-                conn.execute(text("""
-                    DELETE FROM products_tbl
-                    WHERE name=:name
-                """), {
-                    "name": data["product_name"]
-                })
-                """
-                delete_cart(cart1_db, data["product_name"])
-                delete_cart(cart2_db, data["product_name"])
-                """
+                case "update":
+                    conn.execute(text("""
+                        UPDATE products_tbl
+                        SET name=:name, price=:price, 
+                            description=:description,
+                            quantity=:qty, img_link=:img
+                        WHERE name=:name
+                    """), {
+                        "name": data["product_name"],
+                        "price": data["product_price"],
+                        "description": data["product_description"],
+                        "qty": data["product_qty"],
+                        "img": data["img_link"]
+                    })
 
-            case _:
-                print("Unknown query")
+                case "delete":
+                    conn.execute(text("""
+                        DELETE FROM products_tbl
+                        WHERE name=:name
+                    """), {
+                        "name": data["product_name"]
+                    })
 
-    # Broadcast updated data to ALL clients
-    await broadcast({
-        "message": "success",
-        "data": get_data()
-    })
+                case _:
+                    print("Unknown query")
+
+        # Broadcast success
+        await broadcast({
+            "message": "success",
+            "data": get_data()
+        })
+
+    except Exception as e:
+        print("DB ERROR:", e)
+
+        # Send error to clients instead of disconnecting
+        await broadcast({
+            "message": "error",
+            "error": str(e)
+        })
 
 if __name__ == "__main__":
     uvicorn.run("dashboard:app", reload=True)
