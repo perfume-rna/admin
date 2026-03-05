@@ -28,6 +28,7 @@
         <div class="form-container">
             <h2>Product Update</h2>
             <form id="form_update_product">
+                <input id="product_name_hidden" type="text" hidden>
                 <label>Product Name</label>
                 <input type="text" placeholder="Product name" id="product_name_up" required />
                 <br>
@@ -387,6 +388,7 @@
         const product_img = document.getElementById("product_img_up").value;
         const product_qty = document.getElementById("product_qty_up").value;
         const product_price = document.getElementById("product_price_up").value;
+        const product_previous = document.getElementById("product_name_hidden").value;
 
         if (query == "insert") {
             let products = db.exec("SELECT name FROM products_tbl")[0].values;
@@ -404,7 +406,8 @@
             "product_qty": product_qty,
             "product_description": product_description,
             "img_link": product_img,
-            "product_price": product_price
+            "product_price": product_price,
+            "product_previous": product_previous
         };
 
         sendWS(body);
@@ -463,6 +466,7 @@
         document.getElementById("product_price_up").value = price;
         document.getElementById("product_img_up").value = link;
         document.getElementById("product_dsc_up").value = description;
+        document.getElementById("product_name_hidden").value = name;
     }
 
     function close_form() {
