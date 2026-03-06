@@ -2,6 +2,9 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 from itsdangerous import URLSafeSerializer
 from secrets import token_urlsafe, token_hex
 from sqlalchemy import create_engine, text
@@ -103,21 +106,27 @@ templates = Jinja2Templates(directory="templates")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[""],
     allow_methods=["*"],
     allow_headers=["*"]
 )
+
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # ------------------------------
 # Example login endpoint to generate token
 # ------------------------------
 @app.get("/", response_class=HTMLResponse)
+@limiter.limit("5/minute")
 async def get_dashboard(request: Request):
   try:
     return templates.TemplateResponse("admin_pass.html", {"request": request})
   except:
        print("Error")
 
+@limiter.limit("6/minute")
 @app.post("/login")
 async def login(request: Request):
     form = await request.form()
