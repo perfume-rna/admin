@@ -238,7 +238,7 @@ async def main(data):
             "error": str(e)
         })
 
-@app.route("/health")
+@app.get("/health")
 @limiter.limit("20/minute")
 def health():
     return "Server is running."
