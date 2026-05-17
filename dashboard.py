@@ -107,7 +107,7 @@ templates = Jinja2Templates(directory="templates")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[""],
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "OPTIONS", "HEAD"],
     allow_headers=["*"]
 )
 
@@ -237,6 +237,11 @@ async def main(data):
             "message": "error",
             "error": str(e)
         })
+
+@app.route("/health")
+@limiter.limit("20/minute")
+def health():
+    return "Server is running."
 
 if __name__ == "__main__":
     uvicorn.run("dashboard:app", reload=True)
