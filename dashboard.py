@@ -240,7 +240,7 @@ async def main(data):
 
 @app.get("/health")
 @limiter.limit("20/minute")
-async def health():
+async def health(request: Request):
     return "Server is running."
 
 if __name__ == "__main__":
