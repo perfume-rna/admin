@@ -240,8 +240,12 @@ async def main(data):
 
 @app.get("/health")
 @limiter.limit("20/minute")
-async def health(request: Request):
+async def health_get(request: Request):
     return "Server is running."
+
+@app.head("/health")
+async def health_head():
+    return Response(status_code=200)
 
 if __name__ == "__main__":
     uvicorn.run("dashboard:app", reload=True)
