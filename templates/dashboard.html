@@ -815,6 +815,7 @@ let db;
 
     // Send updated product details
     function update_product_send(query) {
+        closeModal();
         document.getElementById("loading_container").style.display = "flex";
         let body;
         const product_name = document.getElementById("product-name").value;
