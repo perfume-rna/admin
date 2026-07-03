@@ -807,10 +807,10 @@ let db;
                 <p><strong>Description: </strong>${element[4]}</p>
                 <p class="stock">Stock Left: ${element[1]}</p>
             </div>
-            <button id="${element[0]}" onclick='document.getElementById("remove-product-btn").style.display = "block"; document.getElementById("save-changes-btn").onclick = () => update_product_send("update");'>Edit</button>
+            <button id="btn-${index + 1}" onclick='document.getElementById("remove-product-btn").style.display = "block"; document.getElementById("save-changes-btn").onclick = () => update_product_send("update");'>Edit</button>
         </div>
             `;
-            element[0].addEventListener("click", () => {
+            document.getElementById("btn-${index + 1}").addEventListener("click", () => {
               openModal(element[0], element[1], element[2], element[3], element[4]);
             });
         });
