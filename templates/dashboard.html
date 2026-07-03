@@ -560,7 +560,7 @@ textarea{
 
     <div id="failed_container">
        <div id="failed">
-             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSL2pcBiB5mWS_hJxDZQEvBMNsakG3P4GygTQ&s" alt="loading" />
+             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSL2pcBiB5mWS_hJxDZQEvBMNsakG3P4GygTQ&s" alt="failure" />
              <h2>Failed</h2>
              <p id="error_p_tag"></p>
              <button onclick="document.getElementById('failed_container').style.display = 'none'; ">Close</button>
@@ -656,7 +656,7 @@ Fresh bergamot with woody amber notes.
     <div id="sidebar">
 
         <div id="profile-sidebar">
-            <img src="https://i.ibb.co/m5DRhxjt/IMG-2065.jpg" alt="Profile">
+            <img src="https://i.ibb.co/m5DRhxjt/IMG-2065.jpg" alt="Logo Image">
             <p>Perfume RNA</p>
         </div>
 
@@ -804,7 +804,7 @@ let db;
             <div class="product-details">
                 <h3>${element[0]}</h3>
                 <p><strong>Price:</strong> RM${element[2]}</p>
-                <p><strong>Description:</strong>${element[4]}</p>
+                <p><strong>Description: </strong>${element[4]}</p>
                 <p class="stock">Stock Left: ${element[1]}</p>
             </div>
             <button onclick='document.getElementById("remove-product-btn").style.display = "block"; document.getElementById("save-changes-btn").onclick = () => update_product_send("update"); openModal("${element[0]}", ${element[1]}, ${element[2]}, "${element[3]}", "${element[4]}");'>Edit</button>
