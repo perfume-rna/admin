@@ -881,7 +881,7 @@ let db;
 
         openModal("", "", "", "", "");
 
-        document.getElementById("save-changes-btn").onclick = () => update_product_send('insert');
+        document.getElementById("save-changes-btn").onclick = () => addNew();
     }
 
     function removeProduct() {
@@ -891,6 +891,11 @@ let db;
 
     function updateProduct() {
         update_product_send("update");
+        closeModal();
+    }
+
+    function addNew() {
+        update_product_send('insert');
         closeModal();
     }
 </script>
