@@ -634,7 +634,6 @@ Fresh bergamot with woody amber notes.
                     <button
                         type="button"
                         class="save"
-                        onclick="updateProduct()"
                         id="save-changes-btn"
                     >
                         Save Changes
@@ -793,6 +792,10 @@ let db;
         const result = db.exec("SELECT name, quantity, price, link, description FROM products_tbl");
         const products = result.length ? result[0].values : [];
 
+        if (products.length === 0) {
+           console.warn("Database is empty.");
+        }
+
         document.getElementById("products-detail-section").innerHTML = "";
 
         // Add product section
@@ -829,7 +832,7 @@ let db;
         const product_previous = document.getElementById("previous-name").value;
 
         if (query == "insert") {
-            let products = db.exec("SELECT name FROM products_tbl")[0].values;
+            let products = db.exec("SELECT name FROM products_tbl")[0]?.values ?? [];
             for (let i = 0; i < products.length; i++) {
                 if (product_name.trim() == products[i][0]) {
                     alert(`Cannot add similar product name (${product_name})`);
