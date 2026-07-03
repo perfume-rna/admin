@@ -869,7 +869,7 @@ let db;
     websocket.onerror = (error) => {error_render("Websocket Connection Error. Please reload the whole page."); console.error("WebSocket error:", error)};
 
     websocket.onmessage = function(event) {
-        document.getElementById("loading_container").style.display = "flex";
+       document.getElementById("loading_container").style.display = "flex";
        setTimeout(() => {
         try {
             const data = JSON.parse(event.data);
@@ -880,6 +880,7 @@ let db;
             error_render("Error on updating data");
         }
        }, 1000);
+       document.getElementById("loading_container").style.display = "none";
     };
 
     // Render add new product form
