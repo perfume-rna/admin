@@ -542,6 +542,10 @@ textarea{
         width: 50%;
       }
     }
+
+    #products-detail-section {
+       width: 100%;
+    }
 </style>
 
 </head>
@@ -580,9 +584,9 @@ textarea{
 
             <!-- Right Side -->
 
-            <form class="modal-form">
+            <form class="modal-form" onsubmit="return false;">
 
-                <input id="previous-name" value="" hidden>
+                <input id="previous-name" value="" type="hidden">
 
                 <div class="input-group">
                     <label>Product Name</label>
@@ -616,7 +620,7 @@ Fresh bergamot with woody amber notes.
                     </textarea>
                 </div>
 
-                <button id="remove-product-btn" onclick="removeProduct()">Remove product</button>
+                <button id="remove-product-btn" onclick="removeProduct()" type="button">Remove product</button>
 
                 <div class="button-row">
 
@@ -697,32 +701,7 @@ Fresh bergamot with woody amber notes.
         <button id="add-product-btn" onclick="addProduct()">Add product</button>
         <br>
 
-        <!-- Product 1 -->
-
-        <div class="each-product-details">
-
-            <div class="product-number">1</div>
-
-            <img src="https://picsum.photos/200?random=1" alt="Product Image">
-
-            <div class="product-details">
-                <h3>Dior Sauvage</h3>
-
-                <p><strong>Price:</strong> RM450</p>
-
-                <p>
-                    <strong>Description:</strong>
-                    Fresh bergamot with woody amber notes. Perfect for everyday wear.
-                </p>
-
-                <p class="stock">
-                    Stock Left: 18
-                </p>
-            </div>
-
-            <button>Edit</button>
-
-        </div>
+        <div id="products-detail-section"></div>
     </div>
 
 </div>
@@ -814,9 +793,11 @@ let db;
         const result = db.exec("SELECT name, quantity, price, link, description FROM products_tbl");
         const products = result.length ? result[0].values : [];
 
+        document.getElementById("products-detail-section").innerHTML = "";
+
         // Add product section
         products.forEach((element, index) => {
-            document.getElementById("products-detail-screen").innerHTML += `
+            document.getElementById("products-detail-section").innerHTML += `
         <div class="each-product-details">
             <div class="product-number">${index + 1}</div>
             <img src=${element[3]} alt="Product Image">
@@ -826,7 +807,7 @@ let db;
                 <p><strong>Description:</strong>${element[4]}</p>
                 <p class="stock">Stock Left: ${element[1]}</p>
             </div>
-            <button onclick="openModal("${element[0]}", ${element[1]}, ${element[2]}, "${element[3]}", "${element[4]}")">Edit</button>
+            <button onclick='openModal("${element[0]}", ${element[1]}, ${element[2]}, "${element[3]}", "${element[4]}")'>Edit</button>
         </div>
             `;
         });
@@ -834,6 +815,7 @@ let db;
 
     // Send updated product details
     function update_product_send(query) {
+        document.getElementById("loading_container").style.display = "flex"
         let body;
         const product_name = document.getElementById("product-name").value;
         const product_description = document.getElementById("description").value;
@@ -873,7 +855,6 @@ let db;
             error_render("WebSocket not connected. Please try again");
             console.error("WebSocket not connected.");
         }
-        document.getElementById("update_submit").disabled = false;
     }
 
     websocket.onopen = () => {document.getElementById("loading_container").style.display = "flex"; console.log("WebSocket connected.")};
