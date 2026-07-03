@@ -630,6 +630,7 @@ Fresh bergamot with woody amber notes.
                         type="button"
                         class="save"
                         onclick="updateProduct()"
+                        id="save-changes-btn"
                     >
                         Save Changes
                     </button>
@@ -651,7 +652,7 @@ Fresh bergamot with woody amber notes.
 
         <div id="profile-sidebar">
             <img src="https://i.pravatar.cc/150?img=12" alt="Profile">
-            <p>Jason</p>
+            <p>Perfume RNA</p>
         </div>
 
         <div id="sidebar-selection">
@@ -877,10 +878,9 @@ let db;
 
     websocket.onopen = () => {document.getElementById("loading_container").style.display = "flex"; console.log("WebSocket connected.")};
     websocket.onclose = () => {document.getElementById("loading_container").style.display = "flex"; alert("WebSocket disconnected.")};
-    websocket.onerror = (error) => {error_render("Websocket Connection Error. Please try again."); console.error("WebSocket error:", error)};
+    websocket.onerror = (error) => {error_render("Websocket Connection Error. Please reload the whole page."); console.error("WebSocket error:", error)};
 
     websocket.onmessage = function(event) {
-        document.getElementById("screen").style.display = "none";
         document.getElementById("loading_container").style.display = "flex";
        setTimeout(() => {
         try {
@@ -900,7 +900,7 @@ let db;
 
         openModal("", "", "", "", "");
 
-        document.getElementById("").onclick = () => update_product_send('insert');
+        document.getElementById("save-changes-btn").onclick = () => update_product_send('insert');
     }
 
     function removeProduct() {
