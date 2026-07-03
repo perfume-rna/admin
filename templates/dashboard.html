@@ -840,7 +840,7 @@ let db;
         const product_img = document.getElementById("image-link").value;
         const product_qty = document.getElementById("stock").value;
         const product_price = document.getElementById("price").value;
-        const product_previous = document.getElementById("product-name-hidden").value;
+        const product_previous = document.getElementById("previous-name").value;
 
         if (query == "insert") {
             let products = db.exec("SELECT name FROM products_tbl")[0].values;
