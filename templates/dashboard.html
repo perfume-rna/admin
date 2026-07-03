@@ -816,7 +816,7 @@ let db;
 
         // Add product section
         products.forEach((element, index) => {
-            document.getElementById("products-detail-screen").innerHTML = `
+            document.getElementById("products-detail-screen").innerHTML += `
         <div class="each-product-details">
             <div class="product-number">${index + 1}</div>
             <img src=${element[3]} alt="Product Image">
@@ -826,7 +826,7 @@ let db;
                 <p><strong>Description:</strong>${element[4]}</p>
                 <p class="stock">Stock Left: ${element[1]}</p>
             </div>
-            <button onclick="openModal(${element[0]}, ${element[1]}, ${element[2]}, ${element[3]}, ${element[4]})">Edit</button>
+            <button onclick="openModal("${element[0]}", ${element[1]}, ${element[2]}, "${element[3]}", "${element[4]})">Edit</button>
         </div>
             `;
         });
