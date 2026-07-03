@@ -800,16 +800,19 @@ let db;
             document.getElementById("products-detail-section").innerHTML += `
         <div class="each-product-details">
             <div class="product-number">${index + 1}</div>
-            <img src=${element[3]} alt="Product Image">
+            <img src="${element[3]}" alt="Product Image">
             <div class="product-details">
                 <h3>${element[0]}</h3>
                 <p><strong>Price:</strong> RM${element[2]}</p>
                 <p><strong>Description: </strong>${element[4]}</p>
                 <p class="stock">Stock Left: ${element[1]}</p>
             </div>
-            <button onclick='document.getElementById("remove-product-btn").style.display = "block"; document.getElementById("save-changes-btn").onclick = () => update_product_send("update"); openModal("${element[0]}", ${element[1]}, ${element[2]}, "${element[3]}", "${element[4]}");'>Edit</button>
+            <button id="${element[0]}" onclick='document.getElementById("remove-product-btn").style.display = "block"; document.getElementById("save-changes-btn").onclick = () => update_product_send("update");'>Edit</button>
         </div>
             `;
+            element[0].addEventListener("click", () => {
+              openModal(element[0], element[1], element[2], element[3], element[4]);
+            });
         });
     }
 
