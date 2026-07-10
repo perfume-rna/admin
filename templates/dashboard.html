@@ -700,7 +700,9 @@ Fresh bergamot with woody amber notes.
         <button id="add-product-btn" onclick="addProduct()">Add product</button>
         <br>
 
-        <div id="products-detail-section"></div>
+        <div id="products-detail-section">
+            <h2 id="no-products-detail-section">Loading data ...</h2>
+        </div>
     </div>
 
 </div>
@@ -773,8 +775,8 @@ let db;
         db.run("DELETE FROM products_tbl");
         products.forEach(element => {
             db.run(
-                "INSERT INTO products_tbl (name, quantity, price, link, description) VALUES (?,?,?,?,?)",
-                [element[0], element[1], element[2], element[3], element[4]]
+                "INSERT INTO products_tbl (product_id, name, quantity, price, link, description) VALUES (?,?,?,?,?,?)",
+                [element[0], element[1], element[2], element[3], element[4], element[5]]
             );
         });
         renderProductList();
@@ -794,10 +796,13 @@ let db;
 
         if (products.length === 0) {
            console.warn("Database is empty.");
+            document.getElementById("products-detail-section").innerHTML = "";
+            document.getElementById("no-products-detail-section").style.display = "block";
+            document.getElementById("no-products-detail-section").textContent = "No product in database.";
+            return;
         }
 
-        document.getElementById("products-detail-section").innerHTML = "";
-
+        document.getElementById("no-products-detail-section").style.display = "none";
         // Add product section
         products.forEach((element, index) => {
             document.getElementById("products-detail-section").innerHTML += `
