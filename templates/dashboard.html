@@ -707,9 +707,9 @@ Fresh bergamot with woody amber notes.
 
 </body>
 <script>
-function openModal(name, stock, price, imageLink, description){
+function openModal(id, name, stock, price, imageLink, description){
     document.getElementById("product-name").value = name;
-    document.getElementById("previous-name").value = name;
+    document.getElementById("product-id").value = id;
     document.getElementById("stock").value = stock;
     document.getElementById("price").value = price;
     document.getElementById("image-link").value = imageLink;
@@ -803,13 +803,13 @@ let db;
             document.getElementById("products-detail-section").innerHTML += `
         <div class="each-product-details">
             <div class="product-number">${index + 1}</div>
-            <img src="${element[3]}" alt="Product Image">
+            <img src="${element[4]}" alt="Product Image">
             <div class="product-details">
-                <h3>${element[0]}</h3>
-                <p><strong>Price:</strong> RM${element[2]}</p>
-                <p class="stock">Stock Left: ${element[1]}</p>
-                <p><strong>Image link:</strong> <a href="${element[3]}" target="_blank">${element[3]}</a></p>
-                <p><strong>Description: </strong>${element[4]}</p>
+                <h3>${element[1]}</h3>
+                <p><strong>Price:</strong> RM${element[3]}</p>
+                <p class="stock">Stock Left: ${element[2}</p>
+                <p><strong>Image link:</strong> <a href="${element[4]}" target="_blank">${element[4]}</a></p>
+                <p><strong>Description: </strong>${element[5]}</p>
             </div>
             <button id="btn-${index + 1}">Edit</button>
         </div>
@@ -821,7 +821,7 @@ let db;
             document.getElementById(`btn-${index + 1}`).addEventListener("click", () => {
                 document.getElementById("remove-product-btn").style.display = "block"; 
                 document.getElementById("save-changes-btn").onclick = () => update_product_send("update");
-                openModal(element[0], element[1], element[2], element[3], element[4]);
+                openModal(element[0], element[1], element[2], element[3], element[4], element[5]);
             });
         });
     }
@@ -836,7 +836,7 @@ let db;
         const product_img = document.getElementById("image-link").value;
         const product_qty = document.getElementById("stock").value;
         const product_price = document.getElementById("price").value;
-        const product_previous = document.getElementById("previous-name").value;
+        const product_id = document.getElementById("product-id").value;
 
         if (query == "insert") {
             let products = db.exec("SELECT name FROM products_tbl")[0]?.values ?? [];
@@ -855,7 +855,7 @@ let db;
             "product_description": product_description,
             "img_link": product_img,
             "product_price": product_price,
-            "product_previous": product_previous
+            "product_id":product_id
         };
 
         sendWS(body);
