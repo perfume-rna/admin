@@ -791,7 +791,7 @@ let db;
 
     // Add product section
     function renderProductList() {
-        const result = db.exec("SELECT name, quantity, price, link, description FROM products_tbl");
+        const result = db.exec("SELECT product_id, name, quantity, price, link, description FROM products_tbl");
         const products = result.length ? result[0].values : [];
 
         if (products.length === 0) {
