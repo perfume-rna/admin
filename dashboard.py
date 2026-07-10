@@ -11,6 +11,8 @@ from sqlalchemy import create_engine, text
 import bleach
 import uvicorn
 
+connected_clients = {}
+
 productdb = create_engine(
     "mysql+pymysql://2qFsVSFAe2DfpMX.root:1I8dZWlcgKaXxeJ4@gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/perfume_product_db",
     pool_pre_ping=True,
@@ -163,7 +165,7 @@ async def main(data):
                         INSERT INTO products_tbl (product_id, name, quantity, price, image_link, description)
                         VALUES (:id, :name, :qty, :price, :img, :description)
                         """), {
-                           "id": product_id
+                           "id": product_id,
                            "name": data["product_name"],
                            "price": round(float(data["product_price"]), 2),
                            "description": data["product_description"],
