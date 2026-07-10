@@ -1,4 +1,4 @@
-F<!--New version-->
+<!--New version-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -586,7 +586,7 @@ textarea{
 
             <form class="modal-form" onsubmit="return false;">
 
-                <input id="previous-name" value="" type="hidden">
+                <input id="product-id" value="" type="hidden">
 
                 <div class="input-group">
                     <label>Product Name</label>
@@ -754,6 +754,7 @@ let db;
     function createDB() {
         db.run(`
             CREATE TABLE IF NOT EXISTS products_tbl (
+                product_id TEXT,
                 name TEXT,
                 quantity INTEGER,
                 price TEXT,
@@ -791,12 +792,12 @@ let db;
 
     // Add product section
     function renderProductList() {
+        document.getElementById("products-detail-section").innerHTML = "";
         const result = db.exec("SELECT product_id, name, quantity, price, link, description FROM products_tbl");
         const products = result.length ? result[0].values : [];
 
         if (products.length === 0) {
            console.warn("Database is empty.");
-            document.getElementById("products-detail-section").innerHTML = "";
             document.getElementById("no-products-detail-section").style.display = "block";
             document.getElementById("no-products-detail-section").textContent = "No product in database.";
             return;
@@ -812,7 +813,7 @@ let db;
             <div class="product-details">
                 <h3>${element[1]}</h3>
                 <p><strong>Price:</strong> RM${element[3]}</p>
-                <p class="stock">Stock Left: ${element[2}</p>
+                <p class="stock">Stock Left: ${element[2]}</p>
                 <p><strong>Image link:</strong> <a href="${element[4]}" target="_blank">${element[4]}</a></p>
                 <p><strong>Description: </strong>${element[5]}</p>
             </div>
@@ -858,7 +859,7 @@ let db;
             "product_name": product_name,
             "product_qty": product_qty,
             "product_description": product_description,
-            "img_link": product_img,
+            "image_link": product_img,
             "product_price": product_price,
             "product_id":product_id
         };
