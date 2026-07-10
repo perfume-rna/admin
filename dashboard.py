@@ -178,14 +178,14 @@ async def main(data):
                         SET name=:name, price=:price, 
                             description=:description,
                             quantity=:qty, image_link=:img
-                        WHERE name=:product_previous
+                        WHERE product_id=:id
                     """), {
                         "name": data["product_name"],
                         "price": data["product_price"],
                         "description": data["product_description"],
                         "qty": data["product_qty"],
                         "img": data["image_link"],
-                        "product_previous": data["product_previous"]
+                        "id": data["product_id"]
                     })
 
                 case "delete":
