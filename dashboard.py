@@ -33,10 +33,10 @@ def check_productId(id):
 
 def get_data():
     with productdb.connect() as conn:
-      items = conn.execute(text("SELECT product_id, name, quantity, price, img_link, description FROM products_tbl"))
+      items = conn.execute(text("SELECT product_id, name, quantity, price, image_link, description FROM products_tbl"))
       list_items = []
       for x in items:
-          list_items.append([x.product_id, x.name, x.quantity, str(x.price), x.img_link, x.description])
+          list_items.append([x.product_id, x.name, x.quantity, str(x.price), x.image_link, x.description])
       return list_items
     
 async def broadcast(message: dict):
@@ -168,7 +168,7 @@ async def main(data):
                            "price": round(float(data["product_price"]), 2),
                            "description": data["product_description"],
                            "qty": int(data["product_qty"]),
-                           "img": data["img_link"]
+                           "img": data["image_link"]
                     })
                 case "update":
                     conn.execute(text("""
@@ -182,7 +182,7 @@ async def main(data):
                         "price": data["product_price"],
                         "description": data["product_description"],
                         "qty": data["product_qty"],
-                        "img": data["img_link"],
+                        "img": data["image_link"],
                         "product_previous": data["product_previous"]
                     })
 
