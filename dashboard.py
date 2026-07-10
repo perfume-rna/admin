@@ -21,45 +21,15 @@ productdb = create_engine(
     }
 )
 
-"""
-cart1_db = create_engine("mysql+pymysql://4J4VubRMtDYVKrk.root:UtLbWgr32k7ka8sW@gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/perfume_product_db", pool_pre_ping=True)
-cart2_db = create_engine("mysql+pymysql://4J4VubRMtDYVKrk.root:UtLbWgr32k7ka8sW@gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/perfume_product_db", pool_pre_ping=True)
-"""
-connected_clients: dict[WebSocket, str] = {}
-
-"""
-def delete_cart(cartdb, name):
-    with cartdb.connect() as conn:
-        cart = conn.execute(text("SELECT email, cart_json FROM cart_tbl WHERE cart_json LIKE :w"), {"w": f"%{name}%"})
-        if len(cart) == 0: pass
-        for email, cartdata in cart:
-            cartdata = json.loads(cartdata)
-            del cartdata[name]
-            conn.execute(text("UPDATE cart_tbl SET cart_json = :c WHERE email = :e", {"e": email, "c": json.dumps(cartdata)})
-        print("success")
-
-def update_cart(cartdb, change, data):
-    with cartdb.connect() as conn:
-        cart = conn.execute(text("SELECT email, cart_json FROM cart_tbl WHERE cart_json LIKE :w"), {"w": f"%{name}%"})
-        if len(cart) == 0: pass
-        cartdata = json.loads(cartdata)
-        for email, cartdata in cart:
-            if change == "name":
-              qty = cartdata[data["name"]]
-              del cartdata[data["previous-name"]]
-              cartdata[data["name"]] = qty
-            elif change == "qty":
-                if cartdata[data["name"]] > data["qty"]:
-                    cartdata[data["name"]] = data["qty"]
-            elif change == "qty and name":
-                if cartdata[data["name"]] > data["qty"]:
-                    cartdata[data["name"]] = data["qty"]
-                del cartdata[data["previous-name"]]
-            else:
-                print("Error on editing cart")
-            conn.execute(text("UPDATE cart_tbl SET cart_json = :c WHERE email = :e", {"e": email, "c": json.dumps(cartdata)})
-        print("success")
- """       
+def check_productId(id):
+    with productdb.connect() as conn_product:
+        result = conn_product.execute(text("SELECT 1 FROM products_tbl WHERE product_id = :id"), {
+          "id": id
+      }).fetchone()
+        if result is None:
+            return False
+        else:
+            return True
 
 def get_data():
     with productdb.connect() as conn:
@@ -180,28 +150,32 @@ async def main(data):
                 data[key] = bleach.clean(value)
 
         query = data.get("query")
-
         with productdb.begin() as conn:
-
             match query:
                 case "insert":
+                    validatation_pass = False
+                    while not validatation_pass:
+                        product_id = token_urlsafe(16)
+                        validatation_pass = check_productId(product_id)
+                        if validatation_pass:
+                            break
                     conn.execute(text("""
-                        INSERT INTO products_tbl (name, quantity, price, img_link, description)
-                        VALUES (:name, :qty, :price, :img, :description)
-                    """), {
-                        "name": data["product_name"],
-                        "price": round(float(data["product_price"]), 2),
-                        "description": data["product_description"],
-                        "qty": int(data["product_qty"]),
-                        "img": data["img_link"]
+                        INSERT INTO products_tbl (product_id, name, quantity, price, image_link, description)
+                        VALUES (:id, :name, :qty, :price, :img, :description)
+                        """), {
+                           "id": product_id
+                           "name": data["product_name"],
+                           "price": round(float(data["product_price"]), 2),
+                           "description": data["product_description"],
+                           "qty": int(data["product_qty"]),
+                           "img": data["img_link"]
                     })
-
                 case "update":
                     conn.execute(text("""
                         UPDATE products_tbl
                         SET name=:name, price=:price, 
                             description=:description,
-                            quantity=:qty, img_link=:img
+                            quantity=:qty, image_link=:img
                         WHERE name=:product_previous
                     """), {
                         "name": data["product_name"],
