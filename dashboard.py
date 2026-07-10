@@ -33,10 +33,10 @@ def check_productId(id):
 
 def get_data():
     with productdb.connect() as conn:
-      items = conn.execute(text("SELECT name, quantity, price, img_link, description FROM products_tbl"))
+      items = conn.execute(text("SELECT product_id, name, quantity, price, img_link, description FROM products_tbl"))
       list_items = []
       for x in items:
-          list_items.append([x.name, x.quantity, str(x.price), x.img_link, x.description])
+          list_items.append([x.product_id, x.name, x.quantity, str(x.price), x.img_link, x.description])
       return list_items
     
 async def broadcast(message: dict):
