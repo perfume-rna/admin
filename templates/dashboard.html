@@ -798,9 +798,8 @@ let db;
 
         if (products.length === 0) {
            console.warn("Database is empty.");
-            document.getElementById("no-products-detail-section").style.display = "block";
-            document.getElementById("no-products-detail-section").textContent = "No product in database.";
-            return;
+           document.getElementById("products-detail-section").innerHTML = "<h2>No product in database.</h2>";
+           return;
         }
 
         document.getElementById("no-products-detail-section").style.display = "none";
