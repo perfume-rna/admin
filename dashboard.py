@@ -29,9 +29,9 @@ def check_productId(id):
           "id": id
       }).fetchone()
         if result is None:
-            return False
-        else:
             return True
+        else:
+            return False
 
 def get_data():
     with productdb.connect() as conn:
