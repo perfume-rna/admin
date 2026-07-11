@@ -868,9 +868,11 @@ let db;
 
     // Send data packet
     function sendWS(payload) {
+        alert("Run");
         if (websocket.readyState === WebSocket.OPEN) {
             websocket.send(JSON.stringify(payload));
         } else {
+            alert("Problem");
             error_render("WebSocket not connected. Please try again");
             console.error("WebSocket not connected.");
         }
