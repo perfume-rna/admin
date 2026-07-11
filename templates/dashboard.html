@@ -832,7 +832,6 @@ let db;
 
     // Send updated product details
     function update_product_send(query) {
-        alert("1");
         closeModal();
         document.getElementById("loading_container").style.display = "flex";
         let body;
@@ -868,7 +867,6 @@ let db;
 
     // Send data packet
     function sendWS(payload) {
-        alert("Run");
         if (websocket.readyState === WebSocket.OPEN) {
             websocket.send(JSON.stringify(payload));
         } else {
@@ -917,7 +915,6 @@ let db;
     }
 
     function addNew() {
-        alert("2");
         update_product_send('insert');
         closeModal();
     }
