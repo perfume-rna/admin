@@ -2,6 +2,9 @@
 # Token generation & verification
 # ------------------------------
 
+from itsdangerous import URLSafeSerializer
+from secrets import token_urlsafe, token_hex
+
 serializer = URLSafeSerializer(secret_key=token_hex(16))
 
 def verify_token(token: str) -> bool:
