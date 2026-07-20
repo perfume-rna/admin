@@ -852,6 +852,8 @@ let db;
             }
         }
 
+        var updatedDetail = checkUpdate(product_id, product_name, product_qty, product_price, product_img, product_description);
+
         body = {
             "query": query,
             "product_name": product_name,
@@ -859,7 +861,8 @@ let db;
             "product_description": product_description,
             "image_link": product_img,
             "product_price": product_price,
-            "product_id":product_id
+            "product_id":product_id,
+            "updated":  updatedDetail
         };
 
         sendWS(body);
@@ -917,6 +920,22 @@ let db;
     function addNew() {
         update_product_send('insert');
         closeModal();
+    }
+
+    function checkUpdate(id, name, quantity, price, image_link, description) {
+        let detail;
+        const item = db.exec("SELECT name, quantity, price, link, description FROM products_tbl WHERE product_id = ?", [id])[0]?.values[0] ?? [];
+        for (let i = 0; i < item.length; i++) {
+            switch(i) {
+                case 0: if (item[i] === name) {detail = "name"}; break;
+                case 1: if (item[i] === quantity) {detail = "quantity"}; break;
+                case 2: if (item[i] === price) {detail = "price"}; break;
+                case 3: if (item[i] === image_link) {detail = "image_link"}; break;
+                case 4: if (item[i] === description) {detail = "description"}; break;
+                default: break
+            }
+        }
+        return detail
     }
 </script>
 </html>
