@@ -10,6 +10,7 @@ from secrets import token_urlsafe, token_hex
 from sqlalchemy import create_engine, text
 import bleach
 import uvicorn
+from publish import publish
 
 connected_clients = {}
 
@@ -198,6 +199,20 @@ async def main(data):
 
                 case _:
                     print("Unknown query")
+
+        try:
+            updated = {
+                "name": data["product_name"]
+                "quantity": data["product_qty"]
+                "price": data["product_pricee"]
+                "description": data["product_description"]
+                "image_link": data["image_link"]
+                "product_id": data["product_id"]
+            }
+            
+            publish(updated)
+        except Exception as e:
+            print(f"Failed to brodcast updates to other servers: {e}")            
 
         # Broadcast success
         await broadcast({
